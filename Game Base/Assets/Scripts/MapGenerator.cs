@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections;
 
 public class MapGenerator: MonoBehaviour {
-	
+
 	public void generate ()
 	{
 		int wires = Random.Range(3,6);
-		
+		bool line0,line1,line3,line4;
+
 		if(wires == 5) {
 			line4 = true;
 			line3 = true;
