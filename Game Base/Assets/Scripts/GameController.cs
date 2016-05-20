@@ -61,6 +61,18 @@ public class GameController : MonoBehaviour {
         UpdateDist(); // ^
 	}
 
+    public void Hit (Collider other) {
+
+        switch(other.tag){
+            case "Birb": //Cuts off top wire
+                Debug.Log("You hit a birb!!");
+                break;
+            case "Cat": //Cuts off bottom wire
+                Debug.Log("You hit a Meower!!");
+                break;
+            }
+
+    }
 
     void MapGenerator () { //Generates the next segment of map, specifically the active wires, webs, powerups, and wire frays.
 
