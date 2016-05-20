@@ -70,8 +70,19 @@ public class GameController : MonoBehaviour {
             case "Cat": //Cuts off bottom wire
                 Debug.Log("You hit a Meower!!");
                 break;
-            }
-
+	    case "Rat":
+		Debug.Log("You hit a Squeaker!!");
+		break;
+	    case "SpdUp":
+		Debug.Log("Gotta go fast!!");
+		break;
+	    case "SlwDn":
+		Debug.Log("You got a pair of cement shoes!!");
+		break;
+	    case "Hat":
+		Debug.Log("Crikey! You can take another hit!!");
+		break;
+	    }
     }
 
     void MapGenerator () { //Generates the next segment of map, specifically the active wires, webs, powerups, and wire frays.
