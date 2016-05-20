@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour {
     public bool moving; //Safety measure for calculating score. Set to false if the player stops for any reason.
     public bool powerFast; //If true, go fasta
     public bool powerSlow; //If tru, go slowa, slow for a sloth. A slow sloth. What has this world come to?
+    public bool powerHat; //If tru, allows for an additional hit to be taken.
     public Vector3 timeSpeeds; //(slow, reg, fast)
     public Vector3 distSpeeds; //(slow, reg, fast)
 
@@ -66,21 +67,51 @@ public class GameController : MonoBehaviour {
         switch(other.tag){
             case "Birb": //Cuts off top wire
                 Debug.Log("You hit a birb!!");
+		if(powerHat == true)
+			powerHat = false;
+		else
+			lives--;
+		updateLives();
                 break;
             case "Cat": //Cuts off bottom wire
                 Debug.Log("You hit a Meower!!");
+		if(powerHat == true)
+			powerHat = false;
+		else
+			lives--;
+		updateLives();
                 break;
 	    case "Rat":
 		Debug.Log("You hit a Squeaker!!");
+		if(powerHat == true)
+			powerHat = false;
+		else
+			lives--;
+		updateLives();
+		break;
+	    case "Poop":
+		Debug.Log("You got shat on m8");
+		if(powerHat == true)
+			powerHat = false;
+		else
+			lives--;
+		updateLives();
 		break;
 	    case "SpdUp":
 		Debug.Log("Gotta go fast!!");
+		powerFast = true;
+		WaitForSeconds(10);
+		powerFast = false;
 		break;
 	    case "SlwDn":
 		Debug.Log("You got a pair of cement shoes!!");
+		powerSlow = true;
+		WaitForSeconds(10);
+		powerSlow = false;
 		break;
 	    case "Hat":
 		Debug.Log("Crikey! You can take another hit!!");
+		powerHat = true;
 		break;
 	    }
     }
