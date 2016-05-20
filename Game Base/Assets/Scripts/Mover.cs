@@ -3,7 +3,9 @@ using System.Collections;
 
 public class Mover : MonoBehaviour {
 
-	public float speed;
+	public float speed; // basically meters per second, but adjust through playtesting
 
-    //Do stuff with speed. Make sure negatives are acceptable!
+    void Update() {
+        transform.Translate(Time.deltaTime * speed, 0, 0); //Converts speed to m/s, and applies it to the objects transform
+    }
 }

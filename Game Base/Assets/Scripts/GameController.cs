@@ -5,9 +5,12 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 
+    public static GameController controller; //Public reference to the game controller for easier access from other objects.
+
     public int lives; //Setting this value in the inspector before playing will do nothing. It is set in Start();
     public int score; //Same as lives
-    public int maxLives; //If we choose to have a way gain lives, which I don't reccomend
+    public float distance; //Total distance traveled, same as lives
+    public float startWait; //How long to start until enemies start spawning
     public float spawnX; //how far to the right to instantiate enemies (This should be off the screen and then some)
     public float spawnDelayMin; //Min time between spawning enemies
     public float spawnDelayMax; //Max time between spawning enemies
@@ -18,6 +21,8 @@ public class GameController : MonoBehaviour {
     public GameObject life3;
     public Text scoreText; //Reference to the score display at top left
 
+
+    private int maxLives; //If we choose to have a way gain lives, which I don't reccomend
     private bool line4; //Bool of which lines are active.
     private bool line3;
     private bool line1; //the middle line will ALWAYS be active. This leaves a min of 3 lines at any time, and a max of 5.
@@ -26,6 +31,7 @@ public class GameController : MonoBehaviour {
 	void Start () {
 	    lives = 3; //Starting lives
         score = 0; //Starting score
+        distance = 0;
         line4 = true; //Every new game starts with all 5 wires
         line3 = true; //Cause yolo that's why
         line1 = true;
@@ -36,6 +42,7 @@ public class GameController : MonoBehaviour {
 	void Update () {
 	    UpdateScore(); //This is temporary. In the future, only call these function when their values are changed via AddScore();
         UpdateLives(); //Same as above, but with AddLives();
+        distance += Time.deltaTime;
 	}
 
 
@@ -101,36 +108,36 @@ public class GameController : MonoBehaviour {
 
     IEnumerator SpawnEnemies()
     {
-        GameObject enemy; //reference to enemy that we will be instantiating in
-        int spawnYmax;
-        int spawnYmin;
-        enemy = enemies[Random.Range(0, enemies.Length)]; //Pick an enemy at random, all at the same weight
-        if (line4){ //determine the possible y values for spawning enemies
-            spawnYmax = 2;
+        yield return new WaitForSeconds(startWait);
+        while(true)
+        {
+            GameObject enemy; //reference to enemy that we will be instantiating in
+            int spawnYmax;
+            int spawnYmin;
+            enemy = enemies[Random.Range(0, enemies.Length)]; //Pick an enemy at random, all at the same weight
+            if (line4){ //determine the possible y values for spawning enemies
+                spawnYmax = 2;
+            }
+            else if (line3){
+                spawnYmax = 1;
+            }
+            else {
+                spawnYmax = 0;
+            }
+            if (line0){
+                spawnYmin = -2;
+            }
+            else if (line1){
+                spawnYmin = -1;
+            }
+            else {
+                spawnYmin = 0;
+            }
+            Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine position to spawn at
+            Instantiate(enemy, spawnPosition, Quaternion.identity); //Spawn enemy
+            yield return new WaitForSeconds(Random.Range(spawnDelayMin,spawnDelayMax)); //Wait random time before spawning another enemy
         }
-        else if (line3){
-            spawnYmax = 1;
-        }
-        else {
-            spawnYmax = 0;
-        }
-        if (line0){
-            spawnYmin = -2;
-        }
-        else if (line1){
-            spawnYmin = -1;
-        }
-        else {
-            spawnYmin = 0;
-        }
-        Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine position to spawn at
-        Instantiate(enemy, spawnPosition, Quaternion.identity); //Spawn enemy
-
-
-        yield return new WaitForSeconds(Random.Range(spawnDelayMin,spawnDelayMax)); //Wait random time before spawning another enemy
     }
-
-
 
 
 
