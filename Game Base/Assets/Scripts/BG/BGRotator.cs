@@ -8,6 +8,6 @@ public class BGRotator : MonoBehaviour {
     public GameController cont;
 
     void Update () {
-        transform.eulerAngles = new Vector3(0, 0, -cont.distance * scrollSpeed);
+        transform.eulerAngles = new Vector3(0, 0, -(cont.time - 1200) * scrollSpeed);
     }
 }

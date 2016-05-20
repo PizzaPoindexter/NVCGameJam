@@ -8,12 +8,19 @@ public class GameController : MonoBehaviour {
     public static GameController controller; //Public reference to the game controller for easier access from other objects.
 
     public int lives; //Setting this value in the inspector before playing will do nothing. It is set in Start();
-    public int score; //Same as lives
+    public float score; //Same as lives
     public float distance; //Total distance traveled, same as lives
+    public float time; //In-game time passed, same as lives
+    public float distPoints; //Multiplier of points granted by distance travelled
     public float startWait; //How long to start until enemies start spawning
     public float spawnX; //how far to the right to instantiate enemies (This should be off the screen and then some)
     public float spawnDelayMin; //Min time between spawning enemies
     public float spawnDelayMax; //Max time between spawning enemies
+    public bool moving; //Safety measure for calculating score. Set to false if the player stops for any reason.
+    public bool powerFast; //If true, go fasta
+    public bool powerSlow; //If tru, go slowa, slow for a sloth. A slow sloth. What has this world come to?
+    public Vector3 timeSpeeds; //(slow, reg, fast)
+    public Vector3 distSpeeds; //(slow, reg, fast)
 
     public GameObject[] enemies; //Add all enemy prefabs to this array
     public GameObject life1; //Holds refrences to life GUI display at top right
@@ -30,8 +37,12 @@ public class GameController : MonoBehaviour {
 
 	void Start () {
 	    lives = 3; //Starting lives
-        score = 0; //Starting score
+        score = 0;
         distance = 0;
+        time = 950; //Start at sunrise
+        moving = true; //Make sure this is false if there is a delay once the player starts.
+        powerFast = false;
+        powerSlow = false;
         line4 = true; //Every new game starts with all 5 wires
         line3 = true; //Cause yolo that's why
         line1 = true;
@@ -40,9 +51,9 @@ public class GameController : MonoBehaviour {
 	}
     
 	void Update () {
-	    UpdateScore(); //This is temporary. In the future, only call these function when their values are changed via AddScore();
-        UpdateLives(); //Same as above, but with AddLives();
-        distance += Time.deltaTime;
+        UpdateLives(); // This is temporary. In the future this will only be updated by AddLives();
+        UpdateTime(); //This however does belong here. No touchy
+        UpdateDist(); // ^
 	}
 
 
@@ -149,7 +160,7 @@ public class GameController : MonoBehaviour {
 
 
 
-    public void AddScore(int newScoreValue)
+    public void AddScore(float newScoreValue)
     {
         score += newScoreValue;
         UpdateScore();
@@ -157,7 +168,7 @@ public class GameController : MonoBehaviour {
 
     void UpdateScore()
     {
-        scoreText.text = "Score: " + score;
+        scoreText.text = "Score: " + Mathf.FloorToInt(score);
     }
 
     public void AddLives(int newLifeValue)
@@ -166,23 +177,26 @@ public class GameController : MonoBehaviour {
         UpdateLives();
     }
 
-    void UpdateLives()
+    void UpdateLives() //Pretty much just makes little hearts at the top right go away. But also calls Respawn() and GameOver()
     {
         switch(lives){
             case 3:
                 life1.SetActive(true);
                 life2.SetActive(true);
                 life3.SetActive(true);
+                //Respawn();
                 break;
             case 2:
                 life1.SetActive(false);
                 life2.SetActive(true);
                 life3.SetActive(true);
+                //Respawn();
                 break;
             case 1:
                 life1.SetActive(false);
                 life2.SetActive(false);
                 life3.SetActive(true);
+                //Respawn();
                 break;
             case 0:
                 life1.SetActive(false);
@@ -190,6 +204,38 @@ public class GameController : MonoBehaviour {
                 life3.SetActive(false);
                 //GameOver();
                 break;
+        }
+    }
+
+    void UpdateTime() //Time needs to stay between 0 and 2400, where each unit of time in this cotext is 1/100 of and hour.
+    { //It took me an hour to do this math. I am tired and low on rations. If you are reading this plz send help.
+        if (powerFast) {
+            time += Time.deltaTime * timeSpeeds[2];
+        }
+        else if (powerSlow) {
+            time += Time.deltaTime * timeSpeeds[0];
+        }
+        else {
+            time += Time.deltaTime * timeSpeeds[1];
+        }
+        time = Mathf.Repeat(time, 2400);
+    }
+
+    void UpdateDist()
+    {
+        if (moving) {
+            if (powerFast) {
+                distance += Time.deltaTime * distSpeeds[2];
+                AddScore(Time.deltaTime * distSpeeds[2] * distPoints);
+            }
+            else if (powerSlow) {
+                distance += Time.deltaTime * distSpeeds[0];
+                AddScore(Time.deltaTime * distSpeeds[0] * distPoints);
+            }
+            else {
+                distance += Time.deltaTime * distSpeeds[1];
+                AddScore(Time.deltaTime * distSpeeds[1] * distPoints);
+            }
         }
     }
 }

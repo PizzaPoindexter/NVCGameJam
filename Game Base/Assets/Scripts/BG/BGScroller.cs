@@ -8,14 +8,8 @@ public class BGScroller : MonoBehaviour {
 
     public GameController cont;
 
-    private Vector3 startPosition;
-
-    void Start () {
-        startPosition = transform.position;
-    }
-
     void Update () {
         float newPosition = Mathf.Repeat(cont.distance * scrollSpeed, tileSizeX);
-        transform.position = new Vector3(-newPosition, 0, 0);
+        transform.position = new Vector3(-newPosition, 0, 1);
     }
 }
