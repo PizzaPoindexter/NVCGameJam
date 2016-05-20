@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FrayScript : MonoBehavious {
+public class FrayScript : MonoBehaviour {
 	void Start () {
 	//Use this for instantiation
 	}
