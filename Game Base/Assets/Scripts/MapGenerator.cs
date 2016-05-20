@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MapGenerator: MonoBehaviour {
 	
-	void generate ()
+	public void generate ()
 	{
 		int wires = Random.Range(3,6);
 		

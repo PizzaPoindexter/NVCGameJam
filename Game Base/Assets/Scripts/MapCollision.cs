@@ -11,8 +11,8 @@ public class MapCollision : MonoBehaviour
 {
 	void OnCollision(Collider other)
 	{
-		MapGenerator generator = new MapGenerator;
-		generator.generate;
+		MapGenerator generator = new MapGenerator();
+		generator.generate();
 		Debug.Log("Map generated");
 	}
 }
