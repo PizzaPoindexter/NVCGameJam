@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour {
     public Vector3 distSpeeds; //(slow, reg, fast)
 
     public GameObject[] enemies; //Add all enemy prefabs to this array
+    public GameObject[] obstacles; //Obstacle prefabs; i.e. stationary enemies
+    public GameObject[] powerUps; //Stationary objects that provide a bonus to the Sloth. Or the enemies.
     public GameObject life1; //Holds refrences to life GUI display at top right
     public GameObject life2;
     public GameObject life3;
@@ -48,6 +50,8 @@ public class GameController : MonoBehaviour {
         line1 = true;
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
+	StartCoroutine(SpawnObstacles());
+	StartCoroutine(SpawnPowerUps());
 	}
     
 	void Update () {
@@ -115,7 +119,64 @@ public class GameController : MonoBehaviour {
         //Include random webs and frays at random intervals.
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
+    
+    IEumerator SpawnObstacles()
+    {
+        yield return new WaitForSeconds(startWait);
+        while(true)
+        {
+            GameObject obstacle; //reference to obstacle that we will be instantiating in
+            int spawnYmax;
+            int spawnYmin;
+            obstacle = obstacles[Random.Range(0, enemies.Length)]; //Pick obstacle at random
+            if (line4) {
+	        spawnYmax = 2;
+	    } else if(line3) {
+	        spawnYmax = 1;
+	    } else {
+	        spawnYmax = 0;
+	    } if (line 0){
+	        spawnYmin = -2;
+	    } else if(line 1){
+	        spawnYmin = -1;
+	    } else {
+	        spawnYmin = 0;
+	    }
+	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
+	    Instantiate(enemy, spawn.Position, Quaternion.identity); //Spawn the obstacle
+	    spawnDelayMin = 3;
+	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
+	}
+    } //Oops forgot these in the previous commit ¯\_(ツ)_/¯
 
+    IEnumerator SpawnPowerUps()
+    {
+	yield return new WaitForSeconds(startWait);
+	while(true)
+	{
+	    GameObject powerUp; //Power up to be instantiated
+	    int spawnYmax;
+	    int spawnYmin;
+	    spawnDelayMin = 10;
+	    spawnDelayMax = 30;
+	    powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
+	    if (line4){ //Determine possible y values for spawning
+		spawnYmax = 2;
+	    } else if (line3) {
+		spawnYmax = 1;
+	    } else {
+		spawnYmax = 0;
+	    } if (line0){
+		spawnYmin = -2;
+	    } else if (line1){
+		spawnYmin = -1;
+	    } else {
+		spawnYmin = 0;
+	    }
+
+	    Vector3 spawnPosition = new Vector3(spawnx, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
+	    Instantiate(powerUp, spawnPosition, Quaternion.identity); //spawn enemy
+	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait random time to spawn next
 
     IEnumerator SpawnEnemies()
     {
@@ -149,16 +210,6 @@ public class GameController : MonoBehaviour {
             yield return new WaitForSeconds(Random.Range(spawnDelayMin,spawnDelayMax)); //Wait random time before spawning another enemy
         }
     }
-
-
-
-
-
-
-
-
-
-
 
     public void AddScore(float newScoreValue)
     {
@@ -208,6 +259,7 @@ public class GameController : MonoBehaviour {
     }
 
     void UpdateTime() //Time needs to stay between 0 and 2400, where each unit of time in this cotext is 1/100 of and hour.
+        //So in this case, the game can hypothetically run for a total of 24 hours? If I'm thinking of this correctly -Travis
     { //It took me an hour to do this math. I am tired and low on rations. If you are reading this plz send help.
         if (powerFast) {
             time += Time.deltaTime * timeSpeeds[2];
