@@ -79,3 +79,5 @@ ehthumbs.db
 *.txt
 *.stamp
 Game Base/Library/CurrentLayout.dwlt
+Game Base/Library/expandedItems
+*.txt
