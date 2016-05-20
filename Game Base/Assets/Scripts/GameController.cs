@@ -144,7 +144,7 @@ public class GameController : MonoBehaviour {
 	        spawnYmin = 0;
 	    }
 	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
-	    Instantiate(enemy, spawn.Position, Quaternion.identity); //Spawn the obstacle
+	    Instantiate(obstacle, spawnPosition, Quaternion.identity); //Spawn the obstacle
 	    spawnDelayMin = 3;
 	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
 	}
@@ -175,7 +175,7 @@ public class GameController : MonoBehaviour {
 		spawnYmin = 0;
 	    }
 
-	    Vector3 spawnPosition = new Vector3(spawnx, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
+	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
 	    Instantiate(powerUp, spawnPosition, Quaternion.identity); //spawn enemy
 	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait random time to spawn next
 
