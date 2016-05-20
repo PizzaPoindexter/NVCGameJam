@@ -206,6 +206,10 @@ public class GameController : MonoBehaviour {
             else {
                 spawnYmin = 0;
             }
+	    if(enemy.CompareTag("Birb")){
+		spawnYmin = 2;
+		spawnYmax = 2;
+	    }
             Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine position to spawn at
             Instantiate(enemy, spawnPosition, Quaternion.identity); //Spawn enemy
             yield return new WaitForSeconds(Random.Range(spawnDelayMin,spawnDelayMax)); //Wait random time before spawning another enemy
