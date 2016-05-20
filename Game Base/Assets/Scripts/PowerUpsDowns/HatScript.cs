@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class HatScript : MonoBehavious {
+public class HatScript : MonoBehaviour {
 	void Start () {
 	//used for initialization
 	}
