@@ -32,13 +32,14 @@ public class GameController : MonoBehaviour {
 
 
     private int maxLives; //If we choose to have a way gain lives, which I don't reccomend
-    private bool line4; //Bool of which lines are active.
-    private bool line3;
-    private bool line1; //the middle line will ALWAYS be active. This leaves a min of 3 lines at any time, and a max of 5.
-    private bool line0;
+    [HideInInspector] public bool line4; //Bool of which lines are active.
+    [HideInInspector] public bool line3;
+    [HideInInspector] public bool line1; //the middle line will ALWAYS be active. This leaves a min of 3 lines at any time, and a max of 5.
+    [HideInInspector] public bool line0;
 
 	void Start () {
 	    lives = 3; //Starting lives
+        maxLives = 3;
         score = 0;
         distance = 0;
         time = 950; //Start at sunrise
@@ -224,7 +225,7 @@ public class GameController : MonoBehaviour {
 
     public void AddLives(int newLifeValue)
     {
-        lives += newLifeValue;
+        lives = Mathf.Clamp(lives += newLifeValue, 0, maxLives); //Clamps lives so you can't have more than maxLives, or less than 0
         UpdateLives();
     }
 

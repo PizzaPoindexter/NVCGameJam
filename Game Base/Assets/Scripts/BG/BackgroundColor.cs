@@ -19,19 +19,15 @@ public class BackgroundColor : MonoBehaviour {
 	void Update () {
         if (600 <= cont.time && cont.time < 800) { //Moonset
     	    cam.backgroundColor = Color.Lerp(color3, color2, Mathf.Repeat(cont.time/200, 1));
-            Debug.Log("Moonset");
         }
         else if (800 <= cont.time && cont.time < 1000) { //Sunrise
             cam.backgroundColor = Color.Lerp(color2, color1, Mathf.Repeat(cont.time/200, 1));
-            Debug.Log("Sunrise");
         }
         else if (1400 <= cont.time && cont.time < 1600) { //Sunset
             cam.backgroundColor = Color.Lerp(color1, color2, Mathf.Repeat(cont.time/200, 1));
-            Debug.Log("Sunset");
         }
         else if (1600 <= cont.time && cont.time < 1800) { //Moonrise
             cam.backgroundColor = Color.Lerp(color2, color3, Mathf.Repeat(cont.time/200, 1));
-            Debug.Log("Moonrise");
     }
 	}
 }
