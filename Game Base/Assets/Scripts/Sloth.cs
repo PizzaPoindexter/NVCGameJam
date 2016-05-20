@@ -78,5 +78,8 @@ public class SlothScript : MonoBehaviour
         if (up) {
             
         }
+        if (!up) {
+
+        }
     }
 }
