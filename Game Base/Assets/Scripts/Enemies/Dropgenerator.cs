@@ -14,7 +14,8 @@ public class Dropgenerator : MonoBehaviour {
 			frames++;
 			if (frames >= dropRate) {
 				Instantiate (poop, new Vector3 (transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
-				dropped = true;
+//				dropped = true;
+				frames = 0;
 			}
 		}
 	}

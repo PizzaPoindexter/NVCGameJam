@@ -51,8 +51,8 @@ public class GameController : MonoBehaviour {
         line1 = true;
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
-	StartCoroutine(SpawnObstacles());
-	StartCoroutine(SpawnPowerUps());
+//	StartCoroutine(SpawnObstacles());
+//	StartCoroutine(SpawnPowerUps());
 	}
     
 	void Update () {
@@ -158,7 +158,9 @@ public class GameController : MonoBehaviour {
 	    GameObject powerUp; //Power up to be instantiated
 	    int spawnYmax;
 	    int spawnYmin;
-            powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
+//	    spawnDelayMin = 10;
+//	    spawnDelayMax = 30;
+			powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
 	    if (line4){ //Determine possible y values for spawning
 		spawnYmax = 2;
 	    } else if (line3) {
