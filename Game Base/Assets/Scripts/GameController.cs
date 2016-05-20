@@ -158,9 +158,7 @@ public class GameController : MonoBehaviour {
 	    GameObject powerUp; //Power up to be instantiated
 	    int spawnYmax;
 	    int spawnYmin;
-	    spawnDelayMin = 10;
-	    spawnDelayMax = 30;
-			powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
+            powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
 	    if (line4){ //Determine possible y values for spawning
 		spawnYmax = 2;
 	    } else if (line3) {
