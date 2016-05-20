@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bird : MonoBehaviour {
+public class BirdScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
