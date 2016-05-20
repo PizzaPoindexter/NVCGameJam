@@ -121,7 +121,7 @@ public class GameController : MonoBehaviour {
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
     
-    IEumerator SpawnObstacles()
+	IEnumerator SpawnObstacles()
     {
         yield return new WaitForSeconds(startWait);
         while(true)
@@ -129,22 +129,22 @@ public class GameController : MonoBehaviour {
             GameObject obstacle; //reference to obstacle that we will be instantiating in
             int spawnYmax;
             int spawnYmin;
-            obstacle = obstacles[Random.Range(0, enemies.Length)]; //Pick obstacle at random
+			obstacle = obstacles[Random.Range(0, obstacles.Length)]; //Pick obstacle at random
             if (line4) {
 	        spawnYmax = 2;
 	    } else if(line3) {
 	        spawnYmax = 1;
 	    } else {
 	        spawnYmax = 0;
-	    } if (line 0){
+	    } if (line0){
 	        spawnYmin = -2;
-	    } else if(line 1){
+	    } else if(line1){
 	        spawnYmin = -1;
 	    } else {
 	        spawnYmin = 0;
 	    }
 	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
-	    Instantiate(enemy, spawn.Position, Quaternion.identity); //Spawn the obstacle
+			Instantiate(obstacle, spawnPosition, Quaternion.identity); //Spawn the obstacle
 	    spawnDelayMin = 3;
 	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
 	}
@@ -160,7 +160,7 @@ public class GameController : MonoBehaviour {
 	    int spawnYmin;
 	    spawnDelayMin = 10;
 	    spawnDelayMax = 30;
-	    powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
+			powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
 	    if (line4){ //Determine possible y values for spawning
 		spawnYmax = 2;
 	    } else if (line3) {
@@ -175,10 +175,11 @@ public class GameController : MonoBehaviour {
 		spawnYmin = 0;
 	    }
 
-	    Vector3 spawnPosition = new Vector3(spawnx, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
+	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
 	    Instantiate(powerUp, spawnPosition, Quaternion.identity); //spawn enemy
 	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait random time to spawn next
-
+		}
+	}
     IEnumerator SpawnEnemies()
     {
         yield return new WaitForSeconds(startWait);
