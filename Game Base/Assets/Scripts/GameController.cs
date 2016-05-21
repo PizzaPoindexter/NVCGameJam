@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -17,32 +16,36 @@ public class GameController : MonoBehaviour {
     public float spawnX; //how far to the right to instantiate enemies (This should be off the screen and then some)
     public float spawnDelayMin; //Min time between spawning enemies
     public float spawnDelayMax; //Max time between spawning enemies
-    public float powerUpTime = 0; //this determines the power up time, when a powerup is obtained, this should be increase
-    public float powerDownTime = 0; //same as above but for power downs
     public bool moving; //Safety measure for calculating score. Set to false if the player stops for any reason.
-    public bool GameOver; //Disables many game features
     public bool powerFast; //If true, go fasta
     public bool powerSlow; //If tru, go slowa, slow for a sloth. A slow sloth. What has this world come to?
     public bool powerHat; //If tru, allows for temporary invincibility
     public Vector3 timeSpeeds; //(slow, reg, fast)
     public Vector3 distSpeeds; //(slow, reg, fast)
 
-    public Text scoreText; //Reference to the score display at top left
-    public GameObject gameOverPanel;
-    public GameObject[] life; //Holds refrences to life GUI display at top right
+	public int powerUpTime = 0; //this determines the power up time, when a powerup is obtained, this should be increase
+	public int powerDownTime = 0; //same as above but for power downs
+
     public GameObject[] enemies; //Add all enemy prefabs to this array
+    public GameObject[] obstacles; //Obstacle prefabs; i.e. stationary enemies
     public GameObject[] powerUps; //Stationary objects that provide a bonus to the Sloth. Or the enemies.
+    public GameObject life1; //Holds refrences to life GUI display at top right
+    public GameObject life2;
+    public GameObject life3;
+    public Text scoreText; //Reference to the score display at top left
 	public AudioClip[] catSounds;
 	public AudioClip crikey;
-
+	bool GameOver;
+    private int maxLives; //If we choose to have a way gain lives, which I don't reccomend
     [HideInInspector] public bool line4; //Bool of which lines are active.
     [HideInInspector] public bool line3;
-    [HideInInspector] public bool line1; //the middle line (2) will ALWAYS be active. This leaves a min of 3 lines at any time, and a max of 5.
+    [HideInInspector] public bool line1; //the middle line will ALWAYS be active. This leaves a min of 3 lines at any time, and a max of 5.
     [HideInInspector] public bool line0;
 
 	void Start () {
 		GameOver = false;
 	    lives = 3; //Starting lives
+        maxLives = 3;
         score = 0;
         distance = 0;
         time = 950; //Start at sunrise
@@ -167,6 +170,36 @@ public class GameController : MonoBehaviour {
         //Include random webs and frays at random intervals.
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
+
+	IEnumerator SpawnObstacles()
+    {
+        yield return new WaitForSeconds(startWait);
+		while(!GameOver)
+        {
+            GameObject obstacle; //reference to obstacle that we will be instantiating in
+            int spawnYmax;
+            int spawnYmin;
+			obstacle = obstacles[Random.Range(0, obstacles.Length)]; //Pick obstacle at random
+            if (line4) {
+	        spawnYmax = 2;
+	    } else if(line3) {
+	        spawnYmax = 1;
+	    } else {
+	        spawnYmax = 0;
+	    } if (line0){
+	        spawnYmin = -2;
+	    } else if(line1){
+	        spawnYmin = -1;
+	    } else {
+	        spawnYmin = 0;
+	    }
+	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
+			Instantiate(obstacle, spawnPosition, Quaternion.identity); //Spawn the obstacle
+	    spawnDelayMin = 3;
+	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
+	}
+    } //Oops forgot these in the previous commit ¯\_(ツ)_/¯
+    //Oops, forgot to feed your cat ¯\_(ツ)_/¯
 
     IEnumerator SpawnPowerUps()
     {
@@ -300,7 +333,7 @@ public class GameController : MonoBehaviour {
 
     public void AddLives(int newLifeValue)
     {
-        lives += newLifeValue;
+        lives = Mathf.Clamp(lives += newLifeValue, 0, maxLives); //Clamps lives so you can't have more than maxLives, or less than 0
         UpdateLives();
     }
 
@@ -308,25 +341,25 @@ public class GameController : MonoBehaviour {
     {
         switch(lives){
             case 3:
-                life[0].SetActive(true);
-                life[1].SetActive(true);
-                life[2].SetActive(true);
+                life1.SetActive(true);
+                life2.SetActive(true);
+                life3.SetActive(true);
                 break;
             case 2:
-                life[0].SetActive(false);
-                life[1].SetActive(true);
-                life[2].SetActive(true);
+                life1.SetActive(false);
+                life2.SetActive(true);
+                life3.SetActive(true);
                 break;
             case 1:
-                life[0].SetActive(false);
-                life[1].SetActive(false);
-                life[2].SetActive(true);
+                life1.SetActive(false);
+                life2.SetActive(false);
+                life3.SetActive(true);
                 break;
     		case 0:
-                life[0].SetActive(false);
-                life[1].SetActive(false);
-                life[2].SetActive(false);        
-    			Gameover();
+    			life1.SetActive (false);
+    			life2.SetActive (false);
+    			life3.SetActive (false);         
+    			Gameover ();
                 break;
         }
     }
@@ -362,27 +395,11 @@ public class GameController : MonoBehaviour {
             }
         }
     }
-
-	void Gameover()
-    {
+	void Gameover(){
         GameOver = true;
-        gameOverPanel.SetActive (true);
-		playSound (crikey);
+		playSound (crikey);      
 	}
-
-    public void Load(int sceneToLoad)
-    {
-        SceneManager.LoadScene(sceneToLoad);
-    }
-
-    void ScorePanel()
-    {
-
-
-    }
-
-	void playSound(AudioClip ac)
-    {
+	void playSound(AudioClip ac){
 		AudioSource aa = this.GetComponent<AudioSource>();
 		aa.clip = ac;
 		aa.Play();

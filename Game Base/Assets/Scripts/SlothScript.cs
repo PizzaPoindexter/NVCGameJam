@@ -24,6 +24,9 @@ public class SlothScript : MonoBehaviour
 
     void Update()
     {
+		if (nextMove > Time.time) {
+		//play walk again
+		}
         if (Input.GetAxis("Vertical") > 0 && Time.time > nextMove)
         {
             switch (currentWire)
