@@ -23,6 +23,9 @@ public class GameController : MonoBehaviour {
     public Vector3 timeSpeeds; //(slow, reg, fast)
     public Vector3 distSpeeds; //(slow, reg, fast)
 
+	public int powerUpTime = 0; //this determines the power up time, when a powerup is obtained, this should be increase
+	public int powerDownTime = 0; //same as above but for power downs
+
     public GameObject[] enemies; //Add all enemy prefabs to this array
     public GameObject[] obstacles; //Obstacle prefabs; i.e. stationary enemies
     public GameObject[] powerUps; //Stationary objects that provide a bonus to the Sloth. Or the enemies.
@@ -52,8 +55,9 @@ public class GameController : MonoBehaviour {
         line1 = true;
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
-//	StartCoroutine(SpawnObstacles());
-//	StartCoroutine(SpawnPowerUps());
+		StartCoroutine(SpawnObstacles());
+		StartCoroutine(SpawnPowerUps());
+		StartCoroutine(powerUpCycle());
 	}
     
 	void Update () {
@@ -71,7 +75,7 @@ public class GameController : MonoBehaviour {
 			powerHat = false;
 		else
 			lives--;
-		updateLives();
+			UpdateLives();
                 break;
             case "Cat": //Cuts off bottom wire
                 Debug.Log("You hit a Meower!!");
@@ -79,7 +83,7 @@ public class GameController : MonoBehaviour {
 			powerHat = false;
 		else
 			lives--;
-		updateLives();
+			UpdateLives();
                 break;
 	    case "Rat":
 		Debug.Log("You hit a Squeaker!!");
@@ -87,7 +91,7 @@ public class GameController : MonoBehaviour {
 			powerHat = false;
 		else
 			lives--;
-		updateLives();
+			UpdateLives();
 		break;
 	    case "Poop":
 		Debug.Log("You got shat on m8");
@@ -95,19 +99,17 @@ public class GameController : MonoBehaviour {
 			powerHat = false;
 		else
 			lives--;
-		updateLives();
+			UpdateLives();
 		break;
-	    case "SpdUp":
-		Debug.Log("Gotta go fast!!");
-		powerFast = true;
-		WaitForSeconds(10);
-		powerFast = false;
+		case "SpdUp":
+			Debug.Log ("Gotta go fast!!");
+			powerFast = true;
+			powerUpTime += 10;
 		break;
-	    case "SlwDn":
-		Debug.Log("You got a pair of cement shoes!!");
-		powerSlow = true;
-		WaitForSeconds(10);
-		powerSlow = false;
+		case "SlwDn":
+			Debug.Log ("You got a pair of cement shoes!!");
+			powerSlow = true;
+			powerDownTime += 10;
 		break;
 	    case "Hat":
 		Debug.Log("Crikey! You can take another hit!!");
@@ -174,7 +176,25 @@ public class GameController : MonoBehaviour {
         //Include random webs and frays at random intervals.
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
-    
+	IEnumerator powerUpCycle()
+	{
+		
+		while (true) {
+			if (powerFast) {
+				powerUpTime--;
+				if (powerUpTime <= 0) {
+					powerFast = false;
+				}
+			}
+			if (powerSlow) {
+				powerDownTime--;
+				if (powerDownTime <= 0) {
+					powerSlow = false;
+				}
+			}
+			yield return new WaitForSeconds (1);
+		}
+	}
 	IEnumerator SpawnObstacles()
     {
         yield return new WaitForSeconds(startWait);
