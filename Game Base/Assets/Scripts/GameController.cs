@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour {
     public bool moving; //Safety measure for calculating score. Set to false if the player stops for any reason.
     public bool powerFast; //If true, go fasta
     public bool powerSlow; //If tru, go slowa, slow for a sloth. A slow sloth. What has this world come to?
-    public bool powerHat; //If tru, allows for an additional hit to be taken.
+    public bool powerHat; //If tru, allows for temporary invincibility
     public Vector3 timeSpeeds; //(slow, reg, fast)
     public Vector3 distSpeeds; //(slow, reg, fast)
 
@@ -33,8 +33,9 @@ public class GameController : MonoBehaviour {
     public GameObject life2;
     public GameObject life3;
     public Text scoreText; //Reference to the score display at top left
-
-
+	public AudioClip[] catSounds;
+	public AudioClip crikey;
+	bool GameOver;
     private int maxLives; //If we choose to have a way gain lives, which I don't reccomend
     [HideInInspector] public bool line4; //Bool of which lines are active.
     [HideInInspector] public bool line3;
@@ -42,6 +43,7 @@ public class GameController : MonoBehaviour {
     [HideInInspector] public bool line0;
 
 	void Start () {
+		GameOver = false;
 	    lives = 3; //Starting lives
         maxLives = 3;
         score = 0;
@@ -56,65 +58,58 @@ public class GameController : MonoBehaviour {
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
 		StartCoroutine(SpawnPowerUps());
-		StartCoroutine(powerUpCycle());
 	}
     
 	void Update () {
-        UpdateLives(); // This is temporary. In the future this will only be updated by AddLives();
-        UpdateTime(); //This however does belong here. No touchy
-        UpdateDist(); // ^
+		if(!GameOver){
+        UpdateTime(); //Updates in-game time values that control day/night cycles
+        UpdateDist(); //Updatees in-game distance and influences enemy speeds.
+		}
 	}
 
     public void Hit (Collider other) {
 
         switch(other.tag){
-            case "Birb": //Cuts off top wire
-                Debug.Log("You hit a birb!!");
-		if(powerHat == true)
-			powerHat = false;
-		else
-			lives--;
-			UpdateLives();
+            case "Birb":
+                Debug.Log("You hit a tweety birb!!"); //New Cannon: all birbs are tweety
+        		Damage();
                 break;
-            case "Cat": //Cuts off bottom wire
-                Debug.Log("You hit a Meower!!");
-		if(powerHat == true)
-			powerHat = false;
-		else
-			lives--;
-			UpdateLives();
+    		case "Cat":
+    			playSound(catSounds [Random.Range(0,catSounds.Length-1)]);
+    	    	Debug.Log("You hit a Meower!!");
+                Damage();
                 break;
-	    case "Rat":
-		Debug.Log("You hit a Squeaker!!");
-		if(powerHat == true)
-			powerHat = false;
-		else
-			lives--;
-			UpdateLives();
-		break;
-	    case "Poop":
-		Debug.Log("You got shat on m8");
-		if(powerHat == true)
-			powerHat = false;
-		else
-			lives--;
-			UpdateLives();
-		break;
-		case "SpdUp":
-			Debug.Log ("Gotta go fast!!");
-			powerFast = true;
-			powerUpTime += 10;
-		break;
-		case "SlwDn":
-			Debug.Log ("You got a pair of cement shoes!!");
-			powerSlow = true;
-			powerDownTime += 10;
-		break;
-	    case "Hat":
-		Debug.Log("Crikey! You can take another hit!!");
-		powerHat = true;
-		break;
+    	    case "Rat":
+    		    Debug.Log("You hit a Squeaker!!");
+                Damage();
+                break;
+    	    case "Poop":
+    		    Debug.Log("You got shat on m8"); //wow k
+                Damage();
+                break;
+    		case "Shoes":
+    			Debug.Log ("Gotta go fast!!");
+    			powerFast = true;
+    			powerUpTime += 10;
+    		    break;
+    		case "Web": //mrw webs are just spider poop and should be tagged as such
+    			Debug.Log ("Wth is all this sticky white stuff!?");
+    			powerSlow = true;
+    			powerDownTime += 10;
+    		    break;
+            case "Hat": //Proposed change to "BadAssHat"
+        		Debug.Log("Crikey! You are invincible now!!");
+        		powerHat = true;
+        		break;
 	    }
+    }
+
+    void Damage () //All attempts to damage Sydney should go through Damage();
+    {
+        if (!powerHat)
+        {
+            AddLives(-1); //All changes to lives should go through AddLives();
+        }
     }
 
     void MapGenerator () { //Generates the next segment of map, specifically the active wires, webs, powerups, and wire frays.
@@ -175,30 +170,41 @@ public class GameController : MonoBehaviour {
         //Include random webs and frays at random intervals.
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
-	IEnumerator powerUpCycle()
-	{
-		
-		while (true) {
-			if (powerFast) {
-				powerUpTime--;
-				if (powerUpTime <= 0) {
-					powerFast = false;
-				}
-			}
-			if (powerSlow) {
-				powerDownTime--;
-				if (powerDownTime <= 0) {
-					powerSlow = false;
-				}
-			}
-			yield return new WaitForSeconds (1);
-		}
+
+	IEnumerator SpawnObstacles()
+    {
+        yield return new WaitForSeconds(startWait);
+		while(!GameOver)
+        {
+            GameObject obstacle; //reference to obstacle that we will be instantiating in
+            int spawnYmax;
+            int spawnYmin;
+			obstacle = obstacles[Random.Range(0, obstacles.Length)]; //Pick obstacle at random
+            if (line4) {
+	        spawnYmax = 2;
+	    } else if(line3) {
+	        spawnYmax = 1;
+	    } else {
+	        spawnYmax = 0;
+	    } if (line0){
+	        spawnYmin = -2;
+	    } else if(line1){
+	        spawnYmin = -1;
+	    } else {
+	        spawnYmin = 0;
+	    }
+	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
+			Instantiate(obstacle, spawnPosition, Quaternion.identity); //Spawn the obstacle
+	    spawnDelayMin = 3;
+	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
 	}
+    } //Oops forgot these in the previous commit ¯\_(ツ)_/¯
+    //Oops, forgot to feed your cat ¯\_(ツ)_/¯
 
     IEnumerator SpawnPowerUps()
     {
 	yield return new WaitForSeconds(startWait);
-	while(true)
+		while(!GameOver)
 	{
 	    GameObject powerUp; //Power up to be instantiated
 	    int spawnYmax;
@@ -229,7 +235,7 @@ public class GameController : MonoBehaviour {
     IEnumerator SpawnEnemies()
     {
         yield return new WaitForSeconds(startWait);
-        while(true)
+		while(!GameOver)
         {
             GameObject enemy; //reference to enemy that we will be instantiating in
             int spawnYmax;
@@ -269,8 +275,6 @@ public class GameController : MonoBehaviour {
     {
         scoreText.text = "Score: " + Mathf.FloorToInt(score);
     }
-
-
 
     public bool GetScore(int newScore)
     {
@@ -333,39 +337,35 @@ public class GameController : MonoBehaviour {
         UpdateLives();
     }
 
-    void UpdateLives() //Pretty much just makes little hearts at the top right go away. But also calls Respawn() and GameOver()
+    void UpdateLives() //Pretty much just makes little faces at the top right go away, but also calls GameOver()
     {
         switch(lives){
             case 3:
                 life1.SetActive(true);
                 life2.SetActive(true);
                 life3.SetActive(true);
-                //Respawn();
                 break;
             case 2:
                 life1.SetActive(false);
                 life2.SetActive(true);
                 life3.SetActive(true);
-                //Respawn();
                 break;
             case 1:
                 life1.SetActive(false);
                 life2.SetActive(false);
                 life3.SetActive(true);
-                //Respawn();
                 break;
-            case 0:
-                life1.SetActive(false);
-                life2.SetActive(false);
-                life3.SetActive(false);
-                //GameOver();
+    		case 0:
+    			life1.SetActive (false);
+    			life2.SetActive (false);
+    			life3.SetActive (false);         
+    			Gameover ();
                 break;
         }
     }
 
-    void UpdateTime() //Time needs to stay between 0 and 2400, where each unit of time in this cotext is 1/100 of and hour.
-        //So in this case, the game can hypothetically run for a total of 24 hours? If I'm thinking of this correctly -Travis
-    { //It took me an hour to do this math. I am tired and low on rations. If you are reading this plz send help.
+    void UpdateTime() //Time needs to stay between 0 and 2400, where each unit of time in this cotext is 1/100 of and in-game hour.
+    {
         if (powerFast) {
             time += Time.deltaTime * timeSpeeds[2];
         }
@@ -395,4 +395,13 @@ public class GameController : MonoBehaviour {
             }
         }
     }
+	void Gameover(){
+        GameOver = true;
+		playSound (crikey);      
+	}
+	void playSound(AudioClip ac){
+		AudioSource aa = this.GetComponent<AudioSource>();
+		aa.clip = ac;
+		aa.Play();
+	}
 }

@@ -13,7 +13,6 @@ public class SlothScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Hit: " + other);
         cont.Hit(other);
     }
 
@@ -99,9 +98,11 @@ public class SlothScript : MonoBehaviour
         if (up)
         {
             transform.Translate(0, 2, 0);
+            currentWire++;
         }
         else {
             transform.Translate(0, -2, 0);
+            currentWire--;
         }
     }
 }
