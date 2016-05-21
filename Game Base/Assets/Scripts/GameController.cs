@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour {
     public float spawnX; //how far to the right to instantiate enemies (This should be off the screen and then some)
     public float spawnDelayMin; //Min time between spawning enemies
     public float spawnDelayMax; //Max time between spawning enemies
+    public float powerUpDelayMin; //Min time between spawning powerups
+    public float powerUpDelayMax; //Max time between spawning powerups
     public float powerUpTime = 0; //this determines the power up time, when a powerup is obtained, this should be increase
     public float powerDownTime = 0; //same as above but for power downs
     public bool moving; //Safety measure for calculating score. Set to false if the player stops for any reason.
@@ -178,8 +180,6 @@ public class GameController : MonoBehaviour {
 	    GameObject powerUp; //Power up to be instantiated
 	    int spawnYmax;
 	    int spawnYmin;
-//	    spawnDelayMin = 10;
-//	    spawnDelayMax = 30;
 			powerUp = powerUps[Random.Range(0, powerUps.Length)]; //Pick powerup at random
 	    if (line4){ //Determine possible y values for spawning
 		spawnYmax = 2;
@@ -197,7 +197,7 @@ public class GameController : MonoBehaviour {
 
 	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin,spawnYmax), 0); //Determine spawn position
 	    Instantiate(powerUp, spawnPosition, Quaternion.identity); //spawn enemy
-	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait random time to spawn next
+	    yield return new WaitForSeconds(Random.Range(powerUpDelayMin, powerUpDelayMax)); //Wait random time to spawn next
 		}
 	}
     
