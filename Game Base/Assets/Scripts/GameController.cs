@@ -59,6 +59,7 @@ public class GameController : MonoBehaviour {
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
 		StartCoroutine(SpawnPowerUps());
+		StartCoroutine (PowerUpTimer ());
 	}
     
 	void Update () {
@@ -171,7 +172,27 @@ public class GameController : MonoBehaviour {
         //Include random webs and frays at random intervals.
         //Prevent stacking, so that you can't get a solid collumn of frays, making it impossible to corss safely.
     }
+	IEnumerator PowerUpTimer(){
+		while (!GameOver) {
+			yield return new WaitForSeconds(1);
+			if(powerFast){
+				powerUpTime --;
+				if(powerUpTime <=0){
+					powerFast = false;
+				}
 
+			}
+
+			if(powerSlow){
+				powerDownTime --;
+				if(powerDownTime <=0){
+					powerSlow = false;
+				}
+			}
+
+
+		}
+	}
     IEnumerator SpawnPowerUps()
     {
 	yield return new WaitForSeconds(startWait);
