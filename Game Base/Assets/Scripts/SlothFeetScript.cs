@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class SlothFeetScript : Monobehaviour
+public class SlothFeetScript : MonoBehaviour
 {
     public SlothScript sloth; //Represents the sloth
     void fall(Collider other) //Causes sloth to fall when hit by either rat or cat

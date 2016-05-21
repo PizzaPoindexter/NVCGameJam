@@ -100,7 +100,7 @@ public class SlothScript : MonoBehaviour
         }
     }
 
-    void Climb(bool up)
+    public void Climb(bool up)
     {
         nextMove = Time.time + climbSpeed; //Sets climb cooldown
         if (up)
