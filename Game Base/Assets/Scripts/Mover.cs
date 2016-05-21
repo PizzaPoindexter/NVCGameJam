@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class Mover : MonoBehaviour {
-	public GameObject gController;
-	public GameController contr;
+	private GameObject gController;
+	private GameController contr;
 	public float xspeed; // basically meters per second, but adjust through playtesting
 	public float yspeed;
 	void Start(){
