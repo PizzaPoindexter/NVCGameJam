@@ -6,6 +6,7 @@ public class SlothScript : MonoBehaviour
     public int currentWire;
     public float climbSpeed;
     public float moveSpeed;
+	public Animator anim;
 
     public GameController cont;
 
@@ -18,14 +19,18 @@ public class SlothScript : MonoBehaviour
 
     void Start()
     {
+		anim = GetComponent<Animator>();
         currentWire = 2; //Starts on middle wire
         nextMove = 0; //"Cooldown" on how fast you can move up and down
     }
 
     void Update()
     {
+		
 		if (nextMove > Time.time) {
 		//play walk again
+			anim.SetBool("up",false);
+			anim.SetBool ("down", false);
 		}
         if (Input.GetAxis("Vertical") > 0 && Time.time > nextMove)
         {
@@ -100,10 +105,12 @@ public class SlothScript : MonoBehaviour
         nextMove = Time.time + climbSpeed; //Sets climb cooldown
         if (up)
         {
+			anim.SetBool("up",true);
             transform.Translate(0, 2, 0);
             currentWire++;
         }
         else {
+			anim.SetBool("down",true);
             transform.Translate(0, -2, 0);
             currentWire--;
         }
