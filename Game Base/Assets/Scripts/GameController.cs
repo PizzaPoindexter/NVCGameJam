@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour {
     public Vector3 distSpeeds; //(slow, reg, fast)
 
     public Text scoreText; //Reference to the score display at top left
+    public Text endScoreText;
+    public Text winText;
     public GameObject gameOverPanel;
     public GameObject[] life; //Holds refrences to life GUI display at top right
     public GameObject[] enemies; //Add all enemy prefabs to this array
@@ -366,6 +368,11 @@ public class GameController : MonoBehaviour {
 	void Gameover()
     {
         GameOver = true;
+        endScoreText.text = "" + Mathf.Floor(score);
+        if (GetScore(Mathf.FloorToInt(score)))
+        {
+            winText.text = "You got a new highscore!";
+        }
         gameOverPanel.SetActive (true);
 		playSound (crikey);
 	}
@@ -373,12 +380,6 @@ public class GameController : MonoBehaviour {
     public void Load(int sceneToLoad)
     {
         SceneManager.LoadScene(sceneToLoad);
-    }
-
-    void ScorePanel()
-    {
-
-
     }
 
 	void playSound(AudioClip ac)
