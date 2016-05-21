@@ -33,8 +33,9 @@ public class GameController : MonoBehaviour {
     public GameObject life2;
     public GameObject life3;
     public Text scoreText; //Reference to the score display at top left
-
-
+	public AudioClip[] catSounds;
+	public AudioClip crikey;
+	bool GameOver;
     private int maxLives; //If we choose to have a way gain lives, which I don't reccomend
     [HideInInspector] public bool line4; //Bool of which lines are active.
     [HideInInspector] public bool line3;
@@ -42,6 +43,7 @@ public class GameController : MonoBehaviour {
     [HideInInspector] public bool line0;
 
 	void Start () {
+		GameOver = false;
 	    lives = 3; //Starting lives
         maxLives = 3;
         score = 0;
@@ -61,9 +63,11 @@ public class GameController : MonoBehaviour {
 	}
     
 	void Update () {
+		if(!GameOver){
         UpdateLives(); // This is temporary. In the future this will only be updated by AddLives();
         UpdateTime(); //This however does belong here. No touchy
         UpdateDist(); // ^
+		}
 	}
 
     public void Hit (Collider other) {
@@ -77,8 +81,10 @@ public class GameController : MonoBehaviour {
 			lives--;
 			UpdateLives();
                 break;
-            case "Cat": //Cuts off bottom wire
-                Debug.Log("You hit a Meower!!");
+		case "Cat": //Cuts off bottom wire
+			playSound(catSounds [Random.Range(0,catSounds.Length-1)]);
+	    	Debug.Log("You hit a Meower!!");
+
 		if(powerHat == true)
 			powerHat = false;
 		else
@@ -198,7 +204,7 @@ public class GameController : MonoBehaviour {
 	IEnumerator SpawnObstacles()
     {
         yield return new WaitForSeconds(startWait);
-        while(true)
+		while(!GameOver)
         {
             GameObject obstacle; //reference to obstacle that we will be instantiating in
             int spawnYmax;
@@ -227,7 +233,7 @@ public class GameController : MonoBehaviour {
     IEnumerator SpawnPowerUps()
     {
 	yield return new WaitForSeconds(startWait);
-	while(true)
+		while(!GameOver)
 	{
 	    GameObject powerUp; //Power up to be instantiated
 	    int spawnYmax;
@@ -257,7 +263,7 @@ public class GameController : MonoBehaviour {
     IEnumerator SpawnEnemies()
     {
         yield return new WaitForSeconds(startWait);
-        while(true)
+		while(!GameOver)
         {
             GameObject enemy; //reference to enemy that we will be instantiating in
             int spawnYmax;
@@ -325,11 +331,12 @@ public class GameController : MonoBehaviour {
                 life3.SetActive(true);
                 //Respawn();
                 break;
-            case 0:
-                life1.SetActive(false);
-                life2.SetActive(false);
-                life3.SetActive(false);
-                //GameOver();
+		case 0:
+			life1.SetActive (false);
+			life2.SetActive (false);
+			life3.SetActive (false);
+			GameOver = true;
+			Gameover ();
                 break;
         }
     }
@@ -366,4 +373,13 @@ public class GameController : MonoBehaviour {
             }
         }
     }
+	void Gameover(){
+		playSound (crikey);
+
+	}
+	void playSound(AudioClip ac){
+		AudioSource aa = this.GetComponent<AudioSource>();
+		aa.clip = ac;
+		aa.Play();
+	}
 }
