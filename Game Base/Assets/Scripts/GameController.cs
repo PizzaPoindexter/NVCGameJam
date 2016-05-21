@@ -55,7 +55,6 @@ public class GameController : MonoBehaviour {
         line1 = true;
         line0 = true;
         StartCoroutine(SpawnEnemies()); //Start spawn loop
-		StartCoroutine(SpawnObstacles());
 		StartCoroutine(SpawnPowerUps());
 		StartCoroutine(powerUpCycle());
 	}
@@ -195,34 +194,6 @@ public class GameController : MonoBehaviour {
 			yield return new WaitForSeconds (1);
 		}
 	}
-	IEnumerator SpawnObstacles()
-    {
-        yield return new WaitForSeconds(startWait);
-        while(true)
-        {
-            GameObject obstacle; //reference to obstacle that we will be instantiating in
-            int spawnYmax;
-            int spawnYmin;
-			obstacle = obstacles[Random.Range(0, obstacles.Length)]; //Pick obstacle at random
-            if (line4) {
-	        spawnYmax = 2;
-	    } else if(line3) {
-	        spawnYmax = 1;
-	    } else {
-	        spawnYmax = 0;
-	    } if (line0){
-	        spawnYmin = -2;
-	    } else if(line1){
-	        spawnYmin = -1;
-	    } else {
-	        spawnYmin = 0;
-	    }
-	    Vector3 spawnPosition = new Vector3(spawnX, 2*Random.Range(spawnYmin, spawnYmax), 0); //Determine position
-			Instantiate(obstacle, spawnPosition, Quaternion.identity); //Spawn the obstacle
-	    spawnDelayMin = 3;
-	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait before spawning new obstacle
-	}
-    } //Oops forgot these in the previous commit ¯\_(ツ)_/¯
 
     IEnumerator SpawnPowerUps()
     {
@@ -254,6 +225,7 @@ public class GameController : MonoBehaviour {
 	    yield return new WaitForSeconds(Random.Range(spawnDelayMin, spawnDelayMax)); //Wait random time to spawn next
 		}
 	}
+    
     IEnumerator SpawnEnemies()
     {
         yield return new WaitForSeconds(startWait);
@@ -296,6 +268,63 @@ public class GameController : MonoBehaviour {
     void UpdateScore()
     {
         scoreText.text = "Score: " + Mathf.FloorToInt(score);
+    }
+
+
+
+    public bool GetScore(int newScore)
+    {
+        int[] scores = new int[5];
+
+        for (int i = 0; i<=4; i++)
+        {
+            scores[i] = PlayerPrefs.GetInt("score" + i);
+        }
+
+        for (int i = 0; i<=4; i++)
+        {
+            if (newScore > scores[i])
+            {
+                int ii = i;
+                switch(ii){
+                    case 4:
+                        break;
+                    case 3:
+                            scores[4] = scores[3];
+                        break;
+                    case 2:
+                        for (i = 4; i<=3; i--)
+                        {
+                            scores[i] = scores[i-1];
+                        }
+                        break;
+                    case 1:
+                        for (i = 4; i<=2; i--)
+                        {
+                            scores[i] = scores[i-1];
+                        }
+                        break;
+                    case 0:
+                        for (i = 4; i<=1; i--)
+                        {
+                            scores[i] = scores[i-1];
+                        }
+                        break;
+                }
+                scores[ii] = newScore;
+                SetScore(scores);
+                return true; //To detect if a highscore was beaten
+            }
+        }
+        return false;
+    }
+
+    void SetScore(int[] scores)
+    {
+        for (int i = 0; i<=4; i++)
+        {
+            PlayerPrefs.SetInt("score" + i, scores[i]);
+        }
     }
 
     public void AddLives(int newLifeValue)
