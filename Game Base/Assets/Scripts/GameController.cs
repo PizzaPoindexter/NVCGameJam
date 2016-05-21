@@ -38,6 +38,7 @@ public class GameController : MonoBehaviour {
     public GameObject[] powerUps; //Stationary objects that provide a bonus to the Sloth. Or the enemies.
 	public AudioClip[] catSounds;
 	public AudioClip crikey;
+	public AudioClip ratSounds;
 
     [HideInInspector] public bool line4; //Bool of which lines are active.
     [HideInInspector] public bool line3;
@@ -81,6 +82,10 @@ public class GameController : MonoBehaviour {
     	    	Debug.Log("You hit a Meower!!");
                 Damage();
                 break;
+	    case "Rat":
+		Debug.Log("You hit a squeaker!!");
+		playSound(ratSounds);
+		break;
     	    case "Poop":
     		    Debug.Log("You got shat on m8"); //wow k
                 Damage();
