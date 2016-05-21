@@ -115,4 +115,10 @@ public class SlothScript : MonoBehaviour
             currentWire--;
         }
     }
+
+    void Fall(Collider other)
+    {
+         if(this.tag == "Feet" && other.tag == "Cat" || other.tag == "Rat")
+            Climb(false);
+    }
 }
