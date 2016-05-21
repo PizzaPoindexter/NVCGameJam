@@ -81,10 +81,6 @@ public class GameController : MonoBehaviour {
     	    	Debug.Log("You hit a Meower!!");
                 Damage();
                 break;
-    	    case "Rat":
-    		    Debug.Log("You hit a Squeaker!!");
-                Damage();
-                break;
     	    case "Poop":
     		    Debug.Log("You got shat on m8"); //wow k
                 Damage();
@@ -106,7 +102,7 @@ public class GameController : MonoBehaviour {
 	    }
     }
 
-    void Damage () //All attempts to damage Sydney should go through Damage();
+    public void Damage () //All attempts to damage Sydney should go through Damage();
     {
         if (!powerHat)
         {

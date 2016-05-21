@@ -14,7 +14,22 @@ public class SlothScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        cont.Hit(other);
+		if (other.transform.position.y == this.transform.position.y-2) {
+			cont.Hit (other);
+		} else {
+			if (other.tag == "Rat" || other.tag == "Cat") {
+				
+				Climb (false);
+				if (transform.position.y < -4) {
+					cont.Damage ();
+					cont.Damage ();
+					cont.Damage ();
+				}
+			}
+			if (other.tag == "Poop") {
+				cont.Hit (other);
+			}
+		}
     }
 
     void Start()
